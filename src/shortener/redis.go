@@ -1,42 +1,70 @@
 package shortener
 
 import (
+	"errors"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
+	"time"
 )
 
 type RedisApi struct {
-	redisConn redis.Conn
+	pool *redis.Pool
 }
 
-func NewRedisApi(ip string, port string) *RedisApi {
-	if conn, err := redis.Dial("tcp", fmt.Sprintf("%s:%s", ip, port)); err != nil {
-		panic(err)
-	} else {
-		return &RedisApi{conn}
+func getPool(server string, password string) (pool *redis.Pool) {
+	pool = &redis.Pool{
+		MaxIdle:     3,
+		IdleTimeout: 240 * time.Second,
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", server)
+			if err != nil {
+				return nil, err
+			}
+			if password != "" {
+				if _, err := c.Do("AUTH", password); err != nil {
+					c.Close()
+					return nil, err
+				}
+			}
+			return c, err
+		},
+		TestOnBorrow: func(c redis.Conn, _ time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
+	}
+	return pool
+}
+
+func NewRedisApi(server, password string) *RedisApi {
+	return &RedisApi{
+		getPool(server, password),
 	}
 }
 
 func (api *RedisApi) urlHash() string {
-	if key, err := api.redisConn.Do("INCR", "url.pointer"); err != nil {
-		panic(err)
-	} else {
-		return fmt.Sprintf("%x", key)
-	}
+	return RandomString(7)
 }
 
-func (api *RedisApi) CreateRecord(url string) string {
+func (api *RedisApi) CreateRecord(url string) (string, error) {
+	conn := api.pool.Get()
+	defer conn.Close()
 	hash := api.urlHash()
-	if _, err := api.redisConn.Do("SET", hash, url); err != nil {
-		panic(err)
+	if err := conn.Send("SET", hash, url); err != nil {
+		return "", err
 	}
-	return hash
+	return hash, nil
 }
 
-func (api *RedisApi) GetUrl(hash string) string {
-	if url, err := api.redisConn.Do("GET", hash); err != nil {
-		panic(err)
+func (api *RedisApi) GetUrl(hash string) (string, error) {
+	conn := api.pool.Get()
+	defer conn.Close()
+	if url, err := redis.String(conn.Do("GET", hash)); err != nil {
+		if err == redis.ErrNil {
+			err = errors.New("URL was not found")
+		}
+		return "", err
 	} else {
-		return fmt.Sprintf("%s", url)
+		return fmt.Sprintf("%s", url), nil
 	}
 }

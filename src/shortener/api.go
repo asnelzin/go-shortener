@@ -10,8 +10,7 @@ type JsonResponse map[string]interface{}
 
 func GetApi() *martini.ClassicMartini {
 	var storage Storage
-	redisStorage := NewRedisApi("localhost", "6379") // add config
-	storage = redisStorage
+	storage = NewRedisApi("localhost:6379", "") // add config
 
 	api := martini.Classic()
 	api.Use(render.Renderer(render.Options{
@@ -21,17 +20,20 @@ func GetApi() *martini.ClassicMartini {
 
 	api.Post("/", func(r render.Render, storage Storage, req *http.Request) {
 		if url := req.FormValue("url"); url != "" {
-			hash := storage.CreateRecord(url)
-			response := JsonResponse{
-				"shortUrl": hash,
+			if hash, err := storage.CreateRecord(url); err != nil {
+				r.JSON(http.StatusInternalServerError, JsonResponse{"error": err.Error()})
+			} else {
+				r.JSON(http.StatusOK, JsonResponse{"shortUrl": hash})
 			}
-			r.JSON(http.StatusOK, response)
 		}
 	})
 
 	api.Get("/(?P<hash>[a-zA-Z0-9]+)", func(r render.Render, params martini.Params, storage Storage, req *http.Request) {
-		url := storage.GetUrl(params["hash"])
-		r.Redirect(url)
+		if url, err := storage.GetUrl(params["hash"]); err != nil {
+			r.JSON(http.StatusNotFound, JsonResponse{"error": err.Error()})
+		} else {
+			r.Redirect(url)
+		}
 	})
 
 	return api
