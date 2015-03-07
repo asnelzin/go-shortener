@@ -1,9 +1,11 @@
 package shortener
 
 import (
+	"github.com/asaskevich/govalidator"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"net/http"
+	"strings"
 )
 
 type JsonResponse map[string]interface{}
@@ -20,10 +22,17 @@ func GetApi() *martini.ClassicMartini {
 
 	api.Post("/", func(r render.Render, storage Storage, req *http.Request) {
 		if url := req.FormValue("url"); url != "" {
-			if hash, err := storage.CreateRecord(url); err != nil {
-				r.JSON(http.StatusInternalServerError, JsonResponse{"error": err.Error()})
+			if govalidator.IsURL(url) {
+				if !strings.HasPrefix(url, "http") {
+					url = "http://" + url
+				}
+				if hash, err := storage.CreateRecord(url); err != nil {
+					r.JSON(http.StatusInternalServerError, JsonResponse{"error": err.Error()})
+				} else {
+					r.JSON(http.StatusOK, JsonResponse{"shortUrl": hash})
+				}
 			} else {
-				r.JSON(http.StatusOK, JsonResponse{"shortUrl": hash})
+				r.JSON(http.StatusBadRequest, JsonResponse{"error": "URL is not valid"})
 			}
 		}
 	})
