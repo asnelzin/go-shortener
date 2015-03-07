@@ -16,9 +16,16 @@ func GetApi() *martini.ClassicMartini {
 
 	api := martini.Classic()
 	api.Use(render.Renderer(render.Options{
+		Directory:  "../static/views",
+		Extensions: []string{".html"},
+		Delims:     render.Delims{"{[{", "}]}"},
 		IndentJSON: true,
 	}))
 	api.MapTo(storage, (*Storage)(nil))
+
+	api.Get("/", func(r render.Render) {
+		r.HTML(200, "index", nil)
+	})
 
 	api.Post("/", func(r render.Render, storage Storage, req *http.Request) {
 		if url := req.FormValue("url"); url != "" {
