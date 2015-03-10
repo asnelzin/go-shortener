@@ -16,7 +16,7 @@ func GetApi() *martini.ClassicMartini {
 
 	api := martini.Classic()
 	api.Use(render.Renderer(render.Options{
-		Directory:  "../static/views",
+		Directory:  "static/views",
 		Extensions: []string{".html"},
 		Delims:     render.Delims{"{[{", "}]}"},
 		IndentJSON: true,
