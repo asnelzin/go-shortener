@@ -5,6 +5,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -12,6 +13,13 @@ type JsonResponse map[string]interface{}
 
 func GetApi() *martini.ClassicMartini {
 	var storage Storage
+	var redisHost, redisPassword string
+	if redisHost = os.Getenv("REDIS_HOST"); redisHost == "" {
+		redisHost = "localhost:6379"
+	}
+	if redisPassword = os.Getenv("REDIS_PASSWORD"); redisPassword == "" {
+		redisPassword = ""
+	}
 	storage = NewRedisApi("localhost:6379", "") // add config
 
 	api := martini.Classic()
@@ -21,7 +29,9 @@ func GetApi() *martini.ClassicMartini {
 		Delims:     render.Delims{"{[{", "}]}"},
 		IndentJSON: true,
 	}))
-	api.Use(martini.Static("static"))
+	if os.Getenv("GO_DEBUG") == "true" {
+		api.Use(martini.Static("static"))
+	}
 	api.MapTo(storage, (*Storage)(nil))
 
 	api.Get("/", func(r render.Render) {
