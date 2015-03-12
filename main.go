@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/asnelzin/go-shortener/shortener"
+	"shortener"
 )
 
 func main() {
