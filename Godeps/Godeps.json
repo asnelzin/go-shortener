@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/asnelzin/go-shortener/src",
+	"ImportPath": "github.com/asnelzin/go-shortener",
 	"GoVersion": "go1.4",
 	"Deps": [
 		{
