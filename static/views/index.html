@@ -6,35 +6,33 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="../css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/bootstrap-theme.min.css" />
-    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="css/default.css" />
 
-    <!-- <link rel="shortcut icon" ng-href="{{ faviconHref }}" href="" /> -->
-
-    <title>go-shortnere</title>
+    <title>go-shortener</title>
 
 </head>
 <body>
     <div class="container-fluid main">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <!-- <h1><a href="/">go-shortener</a></h1> -->
-                <form action="/" method="post" class="vertical-center">
+                <form action="/" method="post">
                     <div class="input-group">
-                        <input type="url" placeholder="URL" class="form-control" name="url" id="url">
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default">Short!</button>
-                        </span>
+                        <div class="form-group">
+                            <label for="url" class="control-label"></label>
+                            <input type="url" placeholder="URL to short" class="form-control" name="url" id="url">
+                        </div>
+                        
                     </div>
                 </form>
-                <div class='response-error'></div>
-                <div class="response-hash"></div>
+                <div id="short-url"></div>
             </div>
         </div>
     </div>
 
-    <script src="../js/bootstrap.min.js"></script>
-    script[src=../js/]
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/default.js"></script>
 </body>
 </html>

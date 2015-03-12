@@ -1,12 +1,20 @@
-.vertical-center {
-    margin: 0 auto;
-    width: 80%;
-    height: 200px;
-
-    display: flex;
-    align-items: center;
+form {
+    margin-top: 150px; 
 }
 
-.main h1 {
+.input-group {
+    font-size: 20px;
+    width: 100%;
+}
+
+input#url {
+    border-radius: 5px;
+    height: 50px;
+    font-size: 20px;
+}
+
+#short-url {
+    font-size: 20px;
     text-align: center;
+    margin-top: 50px; 
 }

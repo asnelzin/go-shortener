@@ -21,6 +21,7 @@ func GetApi() *martini.ClassicMartini {
 		Delims:     render.Delims{"{[{", "}]}"},
 		IndentJSON: true,
 	}))
+	api.Use(martini.Static("static"))
 	api.MapTo(storage, (*Storage)(nil))
 
 	api.Get("/", func(r render.Render) {
@@ -34,7 +35,7 @@ func GetApi() *martini.ClassicMartini {
 					url = "http://" + url
 				}
 				if hash, err := storage.CreateRecord(url); err != nil {
-					r.JSON(http.StatusInternalServerError, JsonResponse{"error": err.Error()})
+					r.JSON(http.StatusInternalServerError, JsonResponse{"error": "Redis connection refused"})
 				} else {
 					r.JSON(http.StatusOK, JsonResponse{"shortUrl": hash})
 				}
