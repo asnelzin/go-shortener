@@ -15,7 +15,7 @@
         $('.form-group').toggleClass('has-error');
         $('.control-label').text('');
         
-        var url = location.protocol + '//' + location.host + '/' + data.shortUrl;
+        var url = location.protocol + '//' + location.host + '/s/' + data.shortUrl;
         $('#short-url').append('<a href="' + url + '">' + url + '</a>');
     }
 

@@ -20,7 +20,7 @@ func GetApi() *martini.ClassicMartini {
 	if redisPassword = os.Getenv("REDIS_PASSWORD"); redisPassword == "" {
 		redisPassword = ""
 	}
-	storage = NewRedisApi("localhost:6379", "") // add config
+	storage = NewRedisApi(redisHost, redisPassword) // add config
 
 	api := martini.Classic()
 	api.Use(render.Renderer(render.Options{

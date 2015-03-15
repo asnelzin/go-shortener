@@ -1,1 +1,1 @@
-web: gshortener
+web: go-shortener
