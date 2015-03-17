@@ -1,22 +1,19 @@
 (function(){
 
     function ajaxError(e) {
-        switch (e.status) {
-            case 500:
-               $(location).attr('href', '/500.html');
-               break
-            default:
-                $('.form-group').toggleClass('has-error');
-                $('.control-label').text(e.responseJSON.error);
-        }
+        if (!$('.form-group').hasClass('has-error'))
+            $('.form-group').addClass('has-error');
+        $('.control-label').text(e.responseJSON.error);
     }
 
     function ajaxSuccess(data) {
-        $('.form-group').toggleClass('has-error');
+        formGroup = $('.form-group')
+        if (formGroup.hasClass('has-error'))
+            formGroup.removeClass('has-error');
         $('.control-label').text('');
-        
-        var url = location.protocol + '//' + location.host + '/s/' + data.shortUrl;
-        $('#short-url').append('<a href="' + url + '">' + url + '</a>');
+        console.log(data);
+        var url = location.protocol + '//' + location.host + '/' + data.shortUrl;
+        $('#short-url').html('<a href="' + url + '">' + url + '</a>');
     }
 
     var init = function(){
