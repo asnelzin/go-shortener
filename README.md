@@ -11,3 +11,4 @@ TODO:
 3. ~~Add HTML responses instead of JSON.~~
 4. ~~Add config support.~~
 5. ~~Add url validation.~~
+6. Add expire date to redis records.
