@@ -12,3 +12,6 @@ TODO:
 4. ~~Add config support.~~
 5. ~~Add url validation.~~
 6. Add expire date to redis records.
+
+Public working version:
+http://u.asnelzin.ru/
