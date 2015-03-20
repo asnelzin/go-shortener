@@ -1,7 +1,6 @@
 package shortener
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"net/http"
@@ -40,7 +39,7 @@ func GetApi() *martini.ClassicMartini {
 
 	api.Post("/", func(r render.Render, storage Storage, req *http.Request) {
 		if url := req.FormValue("url"); url != "" {
-			if govalidator.IsURL(url) {
+			if IsURL(url) {
 				if !strings.HasPrefix(url, "http") {
 					url = "http://" + url
 				}
