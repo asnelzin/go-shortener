@@ -50,7 +50,7 @@ func (api *RedisApi) CreateRecord(url string) (string, error) {
 	conn := api.pool.Get()
 	defer conn.Close()
 	hash := api.urlHash()
-	if err := conn.Send("SET", hash, url); err != nil {
+	if err := conn.Send("SETEX", hash, 86400, url); err != nil {
 		return "", err
 	}
 	return hash, nil
